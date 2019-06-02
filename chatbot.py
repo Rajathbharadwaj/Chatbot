@@ -265,11 +265,11 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
 model.summary()
 
 # train
-history = load_model('chatbot_120_epochs-Jose.h5')
+history = load_model('chatbot_120_epochs.h5')
 
 
 ## Evaluating on Given Test Set"""
-filename = 'chatbot_120_epochs-Jose.h5'
+filename = 'chatbot_120_epochs.h5'
 model.load_weights(filename)
 pred_results = model.predict(([inputs_test, queries_test]))
 
