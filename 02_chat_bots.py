@@ -200,6 +200,7 @@ from keras.layers.embeddings import Embedding
 from keras.layers import Input, Activation, Dense, Permute, Dropout
 from keras.layers import add, dot, concatenate
 from keras.layers import LSTM
+from keras.models import load_model
 
 """### Placeholders for Inputs
 
@@ -293,12 +294,8 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
 model.summary()
 
 # train
-history = model.fit([inputs_train, queries_train], answers_train,batch_size=32,epochs=120,validation_data=([inputs_test, queries_test], answers_test))
+history = load_model('chatbot_120_epochs.h5')
 
-"""### Saving the Model"""
-
-filename = 'chatbot_120_epochs.h5'
-model.save(filename)
 
 """## Evaluating the Model
 
