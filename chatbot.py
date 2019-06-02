@@ -6,28 +6,6 @@ with open("train_qa.txt", "rb") as fp:   # Unpickling
 
 with open("test_qa.txt", "rb") as fp:   # Unpickling
     test_data =  pickle.load(fp)
-
-"""----
-
-## Exploring the Format of the Data
-"""
-
-type(test_data)
-
-type(train_data)
-
-len(test_data)
-
-len(train_data)
-
-train_data[0]
-
-' '.join(train_data[0][0])
-
-' '.join(train_data[0][1])
-
-train_data[0][2]
-
 """-----
 
 ## Setting up Vocabulary of All Words
@@ -47,21 +25,19 @@ for story, question , answer in all_data:
 vocab.add('no')
 vocab.add('yes')
 
-vocab
+
 
 vocab_len = len(vocab) + 1 #we add an extra space to hold a 0 for Keras's pad_sequences
 
 max_story_len = max([len(data[0]) for data in all_data])
 
-max_story_len
+
 
 max_question_len = max([len(data[1]) for data in all_data])
 
-max_question_len
-
 """## Vectorizing the Data"""
 
-vocab
+
 
 # Reserve 0 for pad_sequences
 vocab_size = len(vocab) + 1
@@ -75,8 +51,6 @@ from keras.preprocessing.text import Tokenizer
 tokenizer = Tokenizer(filters=[])
 tokenizer.fit_on_texts(vocab)
 
-tokenizer.word_index
-
 train_story_text = []
 train_question_text = []
 train_answers = []
@@ -87,9 +61,7 @@ for story,question,answer in train_data:
 
 train_story_seq = tokenizer.texts_to_sequences(train_story_text)
 
-len(train_story_text)
 
-len(train_story_seq)
 
 # word_index = tokenizer.word_index
 
@@ -151,18 +123,6 @@ def vectorize_stories(data, word_index=tokenizer.word_index, max_story_len=max_s
 inputs_train, queries_train, answers_train = vectorize_stories(train_data)
 
 inputs_test, queries_test, answers_test = vectorize_stories(test_data)
-
-inputs_test
-
-queries_test
-
-answers_test
-
-sum(answers_test)
-
-tokenizer.word_index['yes']
-
-tokenizer.word_index['no']
 
 """## Creating the Model"""
 
@@ -245,7 +205,6 @@ response = Permute((2, 1))(response)  # (samples, query_maxlen, story_maxlen)
 # concatenate the match matrix with the question vector sequence
 answer = concatenate([response, question_encoded])
 
-answer
 
 # Reduce with RNN (LSTM)
 answer = LSTM(32)(answer)  # (samples, 32)
@@ -265,15 +224,13 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
 model.summary()
 
 # train
-history = load_model('chatbot_120_epochs.h5')
+history = model.fit([inputs_train, queries_train], answers_train,batch_size=32,epochs=120,validation_data=([inputs_test, queries_test], answers_test))
 
 
 ## Evaluating on Given Test Set"""
-filename = 'chatbot_120_epochs.h5'
-model.load_weights(filename)
 pred_results = model.predict(([inputs_test, queries_test]))
 
-test_data[0][0]
+
 
 story =' '.join(word for word in test_data[0][0])
 print(story)
@@ -298,15 +255,14 @@ print("Probability of certainty was: ", pred_results[0][val_max])
 Remember you can only use words from the existing vocab
 """
 
-vocab
+
 
 # Note the whitespace of the periods
-my_story = "John left the kitchen . Sandra dropped the football in the garden ."
-my_story.split()
+my_story = input(" Input something like --> John left the kitchen . Sandra dropped the football in the garden .")
 
-my_question = "Is the football in the garden ?"
 
-my_question.split()
+my_question = input("Ask something like --> Is the football in the garden ?")
+
 
 mydata = [(my_story.split(),my_question.split(),'yes')]
 
