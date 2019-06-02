@@ -323,5 +323,3 @@ for key, val in tokenizer.word_index.items():
 
 print("Predicted answer is: ", k)
 print("Probability of certainty was: ", pred_results[0][val_max])
-
-"""# Great Job!"""
